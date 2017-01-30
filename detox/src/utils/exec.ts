@@ -1,15 +1,15 @@
-const log = require('npmlog');
+// const log = require('npmlog');
+import * as log from 'npmlog';
 const retry = require('../utils/retry');
 const exec = require('child-process-promise').exec;
 
 let _operationCounter = 0;
 
-async function execWithRetriesAndLogs(cmd, options, statusLogs, retries = 10, interval = 1000) {
+export async function execWithRetriesAndLogs(cmd, options, statusLogs, retries = 10, interval = 1000) {
   _operationCounter++;
   if (!options.args) {
     throw new Error(`optins.args must be specified`);
   }
-
   log.verbose(`${_operationCounter}: ${cmd}`);
 
   let result;
@@ -42,8 +42,4 @@ async function execWithRetriesAndLogs(cmd, options, statusLogs, retries = 10, in
 
   return result;
 }
-
-module.exports = {
-  execWithRetriesAndLogs
-};
 

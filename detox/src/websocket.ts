@@ -1,16 +1,15 @@
-const log = require('npmlog');
-const WebSocket = require('ws');
-const _ = require('lodash');
+import log = require('npmlog');
+import WebSocket = require('ws');
 
-let _detoxConfig = {};
+let _detoxConfig;
 let _ws;
-let _invokeQueue = [];
+const _invokeQueue : any[] = [];
 let _readyForInvokeId = 0;
 let _finishOnInvokeId;
 let _onTestResult;
 let _onNextAction = {};
 
-function sendAction(type, params) {
+export function sendAction(type, params?) {
   const json = JSON.stringify({
     type: type,
     params: params
@@ -18,11 +17,11 @@ function sendAction(type, params) {
   _ws.send(json);
 }
 
-function config(params) {
+export function config(params) {
   _detoxConfig = params;
 }
 
-function connect(onConnect) {
+export function connect(onConnect) {
   _ws = new WebSocket(_detoxConfig.server);
   _ws.on('open', () => {
     sendAction('login', {
@@ -40,7 +39,7 @@ function connect(onConnect) {
   });
 }
 
-function cleanup(onComplete) {
+export function cleanup(onComplete) {
   waitForNextAction('cleanupDone', onComplete);
   if (_ws.readyState === WebSocket.OPEN) {
     sendAction('cleanup');
@@ -56,7 +55,7 @@ process.on('uncaughtException', (err) => {
     _ws.close();
   }
   //log.errorerr);
-  //throw err;
+  throw err;
 });
 
 process.on('unhandledRejection', function(reason, p) {
@@ -68,7 +67,7 @@ process.on('unhandledRejection', function(reason, p) {
   throw reason;
 });
 
-function execute(invocation) {
+export function execute(invocation) {
   if (typeof invocation === 'function') {
     invocation = invocation();
   }
@@ -80,16 +79,16 @@ function execute(invocation) {
   }
 }
 
-function waitForTestResult(done) {
+export function waitForTestResult(done) {
   _finishOnInvokeId = _invokeQueue.length;
   _onTestResult = done;
 }
 
-function waitForNextAction(type, done) {
+export function waitForNextAction(type, done) {
   _onNextAction[type] = done;
 }
 
-function handleAction(type, params) {
+export function handleAction(type, params) {
   if (typeof _onNextAction[type] === 'function') {
     _onNextAction[type]();
     _onNextAction[type] = undefined;
@@ -123,13 +122,3 @@ function handleAction(type, params) {
     }
   }
 }
-
-module.exports = {
-  config,
-  connect,
-  cleanup,
-  waitForTestResult,
-  waitForNextAction,
-  execute,
-  sendAction
-};

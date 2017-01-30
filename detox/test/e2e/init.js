@@ -1,3 +1,4 @@
+require('ts-node/register');
 const detox = require('../../src/index');
 const config = require('../package.json').detox;
 

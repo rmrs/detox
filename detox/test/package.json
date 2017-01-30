@@ -14,7 +14,8 @@
   },
   "devDependencies": {
     "detox": "^4.0.9",
-    "detox-server": "^1.1.0"
+    "detox-server": "^1.1.0",
+    "ts-node": "^2.0.0"
   },
   "detox": {
     "session": {
@@ -22,8 +23,8 @@
       "sessionId": "test"
     },
     "ios-simulator": {
-        "app": "ios/build/Build/Products/Release-iphonesimulator/example.app",
-        "device": "iPhone 7 Plus"
+      "app": "ios/build/Build/Products/Release-iphonesimulator/example.app",
+      "device": "iPhone 7 Plus"
     }
   }
 }

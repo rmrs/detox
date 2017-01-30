@@ -7,7 +7,6 @@ async function retry(options, func) {
     options = {};
   }
 
-  const start = Date.now();
   let {retries, interval} = options;
   retries = retries || DEFAULT_RETRIES;
   interval = interval || DEFAULT_INTERVAL;

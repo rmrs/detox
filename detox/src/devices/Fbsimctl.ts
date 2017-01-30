@@ -1,33 +1,33 @@
-const path = require('path');
-const fs = require('fs');
-const _ = require('lodash');
-const log = require('npmlog');
-const exec = require('../utils/exec');
+import * as _ from 'lodash';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as exec from '../utils/exec';
 
 // FBSimulatorControl command line docs
 // https://github.com/facebook/FBSimulatorControl/issues/250
 // https://github.com/facebook/FBSimulatorControl/blob/master/fbsimctl/FBSimulatorControlKitTests/Tests/Unit/CommandParsersTests.swift
 
-class Fbsimctl {
+export class Fbsimctl {
 
   constructor() {
-    this._operationCounter = 0;
   }
 
   async list(device) {
     const statusLogs = {
       trying: `Listing devices...`
     };
+
     const query = this._getQueryFromDevice(device);
     const options = {args: `${query} --first 1 --simulators list`};
-    let result = {};
+    let result;
     let simId;
     try {
+      
       result = await this._execFbsimctlCommand(options, statusLogs, 1);
       const parsedJson = JSON.parse(result.stdout);
       simId = _.get(parsedJson, 'subject.udid');
     } catch (ex) {
-      log.error(ex);
+      throw ex;
     }
 
     if (!simId) {
@@ -45,8 +45,7 @@ class Fbsimctl {
     };
 
     const options = {args: `--state=shutdown --state=shutting-down ${udid} boot`};
-    const result = await this._execFbsimctlCommand(options, statusLogs);
-    //return result.childProcess.exitCode === 0;
+    await this._execFbsimctlCommand(options, statusLogs);
   }
 
   async install(udid, absPath) {
@@ -80,7 +79,7 @@ class Fbsimctl {
       prefix: `export FBSIMCTL_CHILD_DYLD_INSERT_LIBRARIES="${this._getFrameworkPath()}"`,
       args: `${udid} launch --stderr ${bundleId} ${launchArgs.join(' ')}`
     };
-    const result = await this._execFbsimctlCommand(options, statusLogs);
+    await this._execFbsimctlCommand(options, statusLogs);
     // in the future we'll allow expectations on logs and _listenOnAppLogfile will always run (remove if)
     //this._listenOnAppLogfile(this._getAppLogfile(bundleId, result.stdout));
   }
@@ -91,7 +90,7 @@ class Fbsimctl {
       successful: `${bundleId} terminated`
     };
     const options = {args: `${udid}  terminate ${bundleId}`};
-    const result = await this._execFbsimctlCommand(options, statusLogs);
+    await this._execFbsimctlCommand(options, statusLogs);
     // in the future we'll allow expectations on logs and _listenOnAppLogfile will always run (remove if)
     //this._listenOnAppLogfile(this._getAppLogfile(bundleId, result.stdout));
   }
@@ -112,7 +111,7 @@ class Fbsimctl {
     return JSON.parse(result.stdout).subject.state !== 'Booted';
   }
 
-  async _execFbsimctlCommand(options, statusLogs, retries, interval) {
+  async _execFbsimctlCommand(options, statusLogs?, retries?, interval?) {
     const cmd = `${options.prefix ? options.prefix + '&&' : ''} fbsimctl --json ${options.args}`;
     return await exec.execWithRetriesAndLogs(cmd, options, statusLogs, retries, interval);
   }
@@ -134,5 +133,3 @@ class Fbsimctl {
     return res.trim();
   }
 }
-
-module.exports = Fbsimctl;

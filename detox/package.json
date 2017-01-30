@@ -37,29 +37,18 @@
     "prepublish": "npm run build"
   },
   "devDependencies": {
-    "babel-cli": "^6.8.0",
-    "babel-core": "^6.8.0",
-    "babel-eslint": "^6.0.4",
-    "babel-polyfill": "^6.8.0",
-    "babel-preset-react-native-stage-0": "^1.0.0",
-    "babel-register": "^6.8.0",
+    "@types/jest": "latest",
+    "@types/lodash": "latest",
+    "@types/node": "latest",
+    "@types/ws": "latest",
     "colors": "^1.1.2",
     "eslint": "3.x.x",
     "eslint-plugin-babel": "4.x.x",
+    "jest": "^18.1.0",
     "minimist": "^1.2.0",
     "shelljs": "^0.7.3",
     "ttab": "^0.3.1",
-    "jest": "^18.1.0"
-  },
-  "babel": {
-    "env": {
-      "test": {
-        "presets": [
-          "react-native-stage-0"
-        ],
-        "retainLines": true
-      }
-    }
+    "typescript": "^2.1.5"
   },
   "dependencies": {
     "child-process-promise": "^2.2.0",
@@ -71,6 +60,15 @@
     "ws": "^1.1.1"
   },
   "jest": {
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "transform": {
+      "^.+\\.(ts|tsx)$": "<rootDir>/preprocessor.js"
+    },
+    "testRegex": ".*\\.test\\.(ts|tsx|js)$",
     "testPathDirs": [
       "node_modules",
       "src"

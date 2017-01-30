@@ -1,8 +1,8 @@
-const log = require('npmlog');
-const websocket = require('./websocket');
-const expect = require('./ios/expect');
-const Simulator = require('./devices/simulator');
-const argparse = require('./utils/argparse');
+import log = require('npmlog');
+import * as websocket from './websocket';
+import  { Simulator } from './devices/simulator';
+import * as expect from './ios/expect';
+import * as argparse from './utils/argparse';
 
 const loglevel = argparse.getArgValue('verbose') ? 'verbose' : 'info';
 log.level = loglevel;
@@ -15,13 +15,14 @@ let _detoxConfig = {
   }
 };
 
-function _config(detoxConfig) {
+export function config(detoxConfig) {
   _detoxConfig = detoxConfig;
 }
 
-async function _start(onStart) {
+export async function start(onStart) {
   expect.exportGlobals();
-  global.simulator = new Simulator();
+  const simulator = new Simulator();
+  global['simulator'] = simulator;
 
   websocket.config(_detoxConfig.session);
   websocket.connect(async() => {
@@ -34,18 +35,18 @@ async function _start(onStart) {
   });
 }
 
-async function openURL(url, onComplete) {
+export async function openURL(url, onComplete) {
   const target = argparse.getArgValue('target') || 'ios-sim';
   if (target === 'ios-sim') {
-    await simulator.openURL(url);
+    await global['simulator'].openURL(url);
   }
   onComplete();
 }
 
-module.exports = {
-  config: _config,
-  start: _start,
-  cleanup: websocket.cleanup,
-  waitForTestResult: websocket.waitForTestResult,
-  openURL: openURL
-};
+export function cleanup(onComplete) {
+  websocket.cleanup(onComplete);
+}
+
+export function waitForTestResult(done) {
+  websocket.waitForTestResult(done);
+}

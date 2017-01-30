@@ -4,16 +4,23 @@ const spawn = require('child_process').spawn;
 const path = require('path');
 const fs = require('fs');
 const _ = require('lodash');
-const websocket = require('../websocket');
-const retry = require('../utils/retry');
+import * as websocket from '../websocket';
 const argparse = require('../utils/argparse');
-const Device = require('./device');
-const FBsimctl = require('./Fbsimctl');
+// const Device = require('./device');
+const FBsimctl = require('./Fbsimctl').Fbsimctl;
 
-class Simulator extends Device {
+export class Simulator {
+
+_fbsimctl;
+_defaultLaunchArgs;
+_currentScheme;
+_verbose;
+_appLogProcess;
+_simulatorUdid;
+_bundleId;
 
   constructor() {
-    super();
+    // super();
     this._fbsimctl = new FBsimctl();
     this._defaultLaunchArgs = [];
     this._currentScheme = {};
@@ -177,5 +184,3 @@ class Simulator extends Device {
     await this._fbsimctl.open(this._simulatorUdid, url);
   }
 }
-
-module.exports = Simulator;

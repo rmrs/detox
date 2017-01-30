@@ -1,5 +1,5 @@
-var websocket = require('./websocket');
-var Invoke = require('./invoke/Invoke');
+import * as websocket from './websocket';
+const Invoke = require('./invoke/Invoke');
 
 module.exports = {
   EarlGrey: require('./invoke/EarlGrey'),

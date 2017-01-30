@@ -2,7 +2,7 @@
 const _ = require('lodash');
 
 describe('Fbsimctl', () => {
-  let Fbsimctl;
+  // let Fbsimctl;
   let fbsimctl;
   let exec;
 
@@ -12,11 +12,11 @@ describe('Fbsimctl', () => {
   });
 
   beforeEach(() => {
-    const log = require('npmlog');
+    // const log = require('npmlog');
     //log.level = 'verbose';
     jest.mock('../utils/exec');
     exec = require('../utils/exec').execWithRetriesAndLogs;
-    FBsimctl = require('./Fbsimctl');
+    let FBsimctl = require('./Fbsimctl').Fbsimctl;
     fbsimctl = new FBsimctl();
   });
 
@@ -73,8 +73,8 @@ describe('Fbsimctl', () => {
   });
 
   it(`exec simulator command with multiple errors and then a success`, async() => {
-    const errorResult = Promise.reject(returnErrorWithValue('error result'));
-    const rejectedPromise = Promise.reject(errorResult);
+    // const errorResult = Promise.reject(returnErrorWithValue('error result'));
+    // const rejectedPromise = Promise.reject(errorResult);
 
     const successfulResult = returnSuccessfulWithValue('successful result');
     const resolvedPromise = Promise.resolve(successfulResult);
