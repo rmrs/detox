@@ -6,3 +6,6 @@
 	path = detox/ios/EarlGrey
 	url = https://github.com/google/EarlGrey.git
 	ignore = dirty
+[submodule "detox/ios/DetoxInstruments"]
+	path = detox/ios/DetoxInstruments
+	url = https://github.com/wix/DetoxInstruments.git

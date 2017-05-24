@@ -11,6 +11,7 @@
 #import "DetoxAppDelegateProxy.h"
 #import "EarlGreyExtensions.h"
 #import "EarlGreyStatistics.h"
+#import <DTXProfiler/DTXProfiler.h>
 
 @interface DetoxManager()
 
@@ -34,7 +35,7 @@ static void detoxConditionalInit()
 	{
 		NSLog(@"☣️ DETOX:: Either 'detoxServer' and/or 'detoxSessionId' arguments are missing; failing Detox.");
 		// if these args were not provided as part of options, don't start Detox at all!
-		return;
+//		return;
 	}
 
 	[[DetoxManager sharedInstance] connectToServer:detoxServer withSessionId:detoxSessionId];
@@ -42,6 +43,9 @@ static void detoxConditionalInit()
 
 
 @implementation DetoxManager
+{
+	DTXProfiler* _profiler;
+}
 
 + (instancetype)sharedInstance
 {
@@ -67,6 +71,9 @@ static void detoxConditionalInit()
 	{
 		[self _waitForRNLoadWithId:nil];
 	}
+	
+	_profiler = [DTXProfiler new];
+	[_profiler startProfilingWithOptions:[DTXProfilingOptions defaultProfilingOptions]];
 	
 	return self;
 }
