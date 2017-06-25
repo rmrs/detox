@@ -76,9 +76,24 @@ void setupForTests()
 	[[GREYUIThreadExecutor sharedInstance] registerIdlingResource:[GREYDispatchQueueIdlingResource resourceWithDispatchQueue:queue name:@"RCTUIManagerQueue"]];
 	
 	Class cls = NSClassFromString(@"RCTJSCExecutor");
-	Method m = class_getClassMethod(cls, NSSelectorFromString(@"runRunLoopThread"));
-	orig_runRunLoopThread = (void(*)(id, SEL))method_getImplementation(m);
-	method_setImplementation(m, (IMP)swz_runRunLoopThread);
+	Method m;
+	if(cls)
+	{
+		//Legacy RN
+		m = class_getClassMethod(cls, NSSelectorFromString(@"runRunLoopThread"));
+	}
+	else
+	{
+		//Modern RN
+		cls = NSClassFromString(@"RCTCxxBridge");
+		m = class_getInstanceMethod(cls, NSSelectorFromString(@"runJSRunLoop"));
+	}
+	
+	if(m)
+	{
+		orig_runRunLoopThread = (void(*)(id, SEL))method_getImplementation(m);
+		method_setImplementation(m, (IMP)swz_runRunLoopThread);
+	}
 	
 //	cls = NSClassFromString(@"RCTDisplayLink");
 //	m = class_getInstanceMethod(cls, NSSelectorFromString(@"addToRunLoop:"));
